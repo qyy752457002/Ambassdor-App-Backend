@@ -1,0 +1,31 @@
+# 使用 Docker Compose 文件的版本 3.12
+version: '3.12'
+
+services:
+  # 定义 backend 服务
+  backend:
+    # 指定 Dockerfile 所在路径来构建镜像
+    build: .
+    
+    # 挂载当前目录（宿主机）到容器内的 /app 目录
+    # 这样可以在宿主机修改代码后，容器内会同步更新
+    volumes:
+      - .:/app
+    
+    # 映射宿主机的端口 8000 到容器的端口 8000
+    # 这样可以通过 http://localhost:8000 访问容器中的服务
+    ports:
+      - 8000:8000
+
+  db:
+    image: postgres:13
+    restart: always 
+    environment:
+      POSTGRES_DB: ambassador      # 数据库名称
+      POSTGRES_USER: root          # 数据库用户名
+      POSTGRES_PASSWORD: root      # 用户密码
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 5432:5432  # 将 PostgreSQL 容器的端口 5432 映射到宿主机的 5432 端口
+
